@@ -39,6 +39,9 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
+      - name: Copy public assets to output
+        run: cp -r public/. out/
+
       - name: Add .nojekyll
         run: touch ./out/.nojekyll
 
