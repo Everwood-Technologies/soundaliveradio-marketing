@@ -1,18 +1,9 @@
-import { fetchCurrentTitle } from "@/lib/soundalive-api";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-static";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const url = searchParams.get("url");
-  if (!url) {
-    return NextResponse.json({ title: "" });
-  }
-  try {
-    const title = await fetchCurrentTitle(url);
-    return NextResponse.json({ title });
-  } catch {
-    return NextResponse.json({ title: "" });
-  }
+// Static export: no request-time data. Returns empty title so build succeeds.
+// For live "Now Playing" on GitHub Pages, point the client at an external API.
+export function GET() {
+  return NextResponse.json({ title: "" });
 }
