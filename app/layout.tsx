@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" style={{ ["--hero-bg-url" as string]: `url(${heroBg.src})` }}>
-      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}>
+      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen pb-20`}>
         <Providers>
           <a href="#main-content" className="skip-link">
             Skip to main content
