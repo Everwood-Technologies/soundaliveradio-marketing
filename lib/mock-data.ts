@@ -1,4 +1,16 @@
 import { CHANNEL_COVERS } from "@/app/assets/channels/channels";
+import eSmittyCurrencyOfTime from "@/app/assets/discover/E. Smitty - Currency Of Time.jpeg";
+import eSmittyFlashFutureArt from "@/app/assets/discover/E. Smitty - Flash Future Art.jpeg";
+import takeoffTuesdaysAwakening from "@/app/assets/discover/TakeoffTuesdays - Awakening.jpg";
+import kristenCapolino from "@/app/assets/discover/Kristen Capolino.jpg";
+import craigGEsmitty from "@/app/assets/discover/Craig G E. Smitty.jpg";
+import evergladesBoss from "@/app/assets/discover/Everglades Boss.jpg";
+import joeRosati from "@/app/assets/discover/Joe Rosati.jpeg";
+import truthStream from "@/app/assets/discover/TruthStream.jpg";
+import rappin4Tay from "@/app/assets/discover/Rappin' 4 Tay.jpg";
+import rebelRodomezBostonAve from "@/app/assets/discover/Rebel Rodomez - Boston Ave.jpg";
+import djRyeBread from "@/app/assets/discover/Dj Rye Bread.jpg";
+import booJacksonHigher from "@/app/assets/discover/Boo Jackson Higher.jpg";
 
 /**
  * Mock data for channels, artists, and subscription tiers.
@@ -50,7 +62,7 @@ export const MOCK_ARTISTS = [
     name: "E. Smitty",
     genre: "Hip-Hop",
     bio: "Driving the Sound Alive Radio Hip-Hop channel with original cuts.",
-    imageUrl: "/discover/E.%20Smitty%20-%20Currency%20Of%20Time.jpeg",
+    imageUrl: eSmittyCurrencyOfTime,
     channelHref: "https://soundaliveradio.net",
   },
   {
@@ -58,7 +70,7 @@ export const MOCK_ARTISTS = [
     name: "E. Smitty",
     genre: "House",
     bio: "Curating high-energy House sets for the Sound Alive underground.",
-    imageUrl: "/discover/E.%20Smitty%20-%20Flash%20Future%20Art.jpeg",
+    imageUrl: eSmittyFlashFutureArt,
     channelHref: "https://house.soundaliveradio.net",
   },
   {
@@ -66,7 +78,7 @@ export const MOCK_ARTISTS = [
     name: "TakeoffTuesdays",
     genre: "House",
     bio: "Weekly House-focused programming built for peak-time momentum.",
-    imageUrl: "/discover/TakeoffTuesdays%20-%20Awakening.jpg",
+    imageUrl: takeoffTuesdaysAwakening,
     channelHref: "https://house.soundaliveradio.net",
   },
   {
@@ -74,7 +86,7 @@ export const MOCK_ARTISTS = [
     name: "Kristen Capolino",
     genre: "Rock",
     bio: "Rock-driven sessions blending powerful vocals and live performance.",
-    imageUrl: "/discover/Kristen%20Capolino.jpg",
+    imageUrl: kristenCapolino,
     channelHref: "https://rock.soundaliveradio.net",
   },
   {
@@ -82,7 +94,7 @@ export const MOCK_ARTISTS = [
     name: "Craig G",
     genre: "Hip-Hop",
     bio: "Classic lyricism and East Coast energy on the Hip-Hop stream.",
-    imageUrl: "/discover/Craig%20G%20E.%20Smitty.jpg",
+    imageUrl: craigGEsmitty,
     channelHref: "https://soundaliveradio.net",
   },
   {
@@ -90,7 +102,7 @@ export const MOCK_ARTISTS = [
     name: "Everglades Boss",
     genre: "Hip-Hop",
     bio: "South Florida grit and raw storytelling from the independent lane.",
-    imageUrl: "/discover/Everglades%20Boss.jpg",
+    imageUrl: evergladesBoss,
     channelHref: "https://soundaliveradio.net",
   },
   {
@@ -98,7 +110,7 @@ export const MOCK_ARTISTS = [
     name: "Joe Rosati",
     genre: "Rock",
     bio: "Host and artist spotlighting guitar-driven records and interviews.",
-    imageUrl: "/discover/Joe%20Rosati.jpeg",
+    imageUrl: joeRosati,
     channelHref: "https://rock.soundaliveradio.net",
   },
   {
@@ -106,7 +118,7 @@ export const MOCK_ARTISTS = [
     name: "TruthStream Radio",
     genre: "Talk",
     bio: "Talk programming hosted by Joe Rosati and Scott Stone.",
-    imageUrl: "/discover/TruthStream.jpg",
+    imageUrl: truthStream,
     channelHref: "https://talk.soundaliveradio.net",
   },
   {
@@ -114,7 +126,7 @@ export const MOCK_ARTISTS = [
     name: "Rappin' 4 Tay",
     genre: "Hip-Hop",
     bio: "West Coast Hip-Hop icon delivering timeless records.",
-    imageUrl: "/discover/Rappin%27%204%20Tay.jpg",
+    imageUrl: rappin4Tay,
     channelHref: "https://soundaliveradio.net",
   },
   {
@@ -122,7 +134,7 @@ export const MOCK_ARTISTS = [
     name: "Rebel Rodomez",
     genre: "Hip-Hop",
     bio: "Underground Hip-Hop storyteller with street-level perspective.",
-    imageUrl: "/discover/Rebel%20Rodomez%20-%20Boston%20Ave.jpg",
+    imageUrl: rebelRodomezBostonAve,
     channelHref: "https://soundaliveradio.net",
   },
   {
@@ -130,7 +142,7 @@ export const MOCK_ARTISTS = [
     name: "DJ Rye Bread",
     genre: "House",
     bio: "House selections built for dance floors and all-night sets.",
-    imageUrl: "/discover/Dj%20Rye%20Bread.jpg",
+    imageUrl: djRyeBread,
     channelHref: "https://house.soundaliveradio.net",
   },
   {
@@ -138,7 +150,7 @@ export const MOCK_ARTISTS = [
     name: "Boo Jackson",
     genre: "House",
     bio: "Groove-forward House records from the Sound Alive roster.",
-    imageUrl: "/discover/Boo%20Jackson%20Higher.jpg",
+    imageUrl: booJacksonHigher,
     channelHref: "https://house.soundaliveradio.net",
   },
 ];
