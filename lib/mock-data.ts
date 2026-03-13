@@ -1,3 +1,5 @@
+import { CHANNEL_COVERS } from "@/app/assets/channels/channels";
+
 /**
  * Mock data for channels, artists, and subscription tiers.
  * Replace with API or CMS data when backend is ready.
@@ -9,7 +11,7 @@ export const MOCK_CHANNELS = [
     name: "Hip-Hop",
     slug: "hiphop",
     genre: "Hip-Hop",
-    coverUrl: "/channels/hiphop.png",
+    coverUrl: CHANNEL_COVERS.hiphop.src,
     nowPlaying: "Artist - Track Name",
     listeners: "2.4K",
   },
@@ -18,7 +20,7 @@ export const MOCK_CHANNELS = [
     name: "House",
     slug: "house",
     genre: "Electronic",
-    coverUrl: "/channels/house.png",
+    coverUrl: CHANNEL_COVERS.house.src,
     nowPlaying: "DJ Set - Live Mix",
     listeners: "1.8K",
   },
@@ -27,7 +29,7 @@ export const MOCK_CHANNELS = [
     name: "Rock",
     slug: "rock",
     genre: "Rock",
-    coverUrl: "/channels/rock.png",
+    coverUrl: CHANNEL_COVERS.rock.src,
     nowPlaying: "Band - Song",
     listeners: "1.2K",
   },
@@ -36,7 +38,7 @@ export const MOCK_CHANNELS = [
     name: "Talk",
     slug: "talk",
     genre: "Talk",
-    coverUrl: "/channels/talk.png",
+    coverUrl: CHANNEL_COVERS.talk.src,
     nowPlaying: "Host - Episode",
     listeners: "890",
   },

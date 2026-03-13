@@ -4,6 +4,7 @@ import "./globals.css";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Providers } from "@/components/layout/Providers";
+import heroBg from "@/app/assets/hero-bg.png";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,8 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}>
+    <html lang="en" className="dark" style={{ ["--hero-bg-url" as string]: `url(${heroBg.src})` }}>
+      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen pb-20`}>
         <Providers>
           <a href="#main-content" className="skip-link">
             Skip to main content

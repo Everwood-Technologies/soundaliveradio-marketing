@@ -7,6 +7,7 @@ import { useState } from "react";
 import { SITE_NAME, NAV_LINKS } from "@/lib/constants";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import logoImg from "@/app/assets/logo.png";
 
 export function Nav() {
   const pathname = usePathname();
@@ -24,7 +25,7 @@ export function Nav() {
           aria-label={SITE_NAME}
         >
           <Image
-            src="/logo.png"
+            src={logoImg}
             alt=""
             width={160}
             height={44}

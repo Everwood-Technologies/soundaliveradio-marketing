@@ -53,7 +53,7 @@ html::before {
       rgba(10, 10, 10, 0.45),
       rgba(10, 10, 10, 0.7)
     ),
-    url("/hero-bg.png");
+    var(--hero-bg-url);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

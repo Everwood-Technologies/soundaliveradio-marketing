@@ -1,3 +1,5 @@
+import { CHANNEL_COVERS } from "@/app/assets/channels/channels";
+
 /**
  * Normalized channel shape for UI (ChannelCard, grids).
  * Built from Sound Alive API (radiostations + current-title) with fallbacks.
@@ -19,12 +21,7 @@ export interface LiveChannel {
   channelBaseUrl?: string;
 }
 
-const KNOWN_SLUG_COVERS: Record<string, string> = {
-  hiphop: "/channels/hiphop.png",
-  house: "/channels/house.png",
-  rock: "/channels/rock.png",
-  talk: "/channels/talk.png",
-};
+type ChannelCoverSlug = keyof typeof CHANNEL_COVERS;
 
 /** Map API station name to cover image slug (we have hiphop, house, rock, talk). */
 function coverSlugForName(name: string): string | undefined {
@@ -125,7 +122,10 @@ export function toLiveChannel(
         : undefined;
 
   const coverSlug = coverSlugForName(name);
-  const coverUrl = coverSlug ? KNOWN_SLUG_COVERS[coverSlug] : undefined;
+  const coverUrl =
+    coverSlug && coverSlug in CHANNEL_COVERS
+      ? CHANNEL_COVERS[coverSlug as ChannelCoverSlug].src
+      : undefined;
 
   return {
     id,
