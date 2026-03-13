@@ -21,8 +21,7 @@ function canPlayHlsNatively(): boolean {
 }
 
 function toPlayableSrc(streamUrl: string): string {
-  if (isHlsUrl(streamUrl)) return streamUrl;
-  return `/api/stream?url=${encodeURIComponent(streamUrl)}`;
+  return streamUrl;
 }
 
 /**
