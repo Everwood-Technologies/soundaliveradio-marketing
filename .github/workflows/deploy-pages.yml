@@ -39,10 +39,49 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
-      - name: Add .nojekyll
+      - name: Prepare Pages artifact
         run: |
+          rm -rf ./out
           mkdir -p ./out
+
+          # Copy prerendered app output produced by `next build`.
+          cp -R ./.next/server/app/. ./out/
+
+          # Copy client bundles referenced by generated HTML.
+          mkdir -p ./out/_next
+          cp -R ./.next/static ./out/_next/static
+
+          # Copy public assets (if present).
+          if [ -d ./public ]; then
+            cp -R ./public/. ./out/
+          fi
+
+          # Ensure route paths like /about resolve on static hosting.
+          python3 - <<'PY'
+          from pathlib import Path
+
+          out = Path("out")
+          html_files = list(out.rglob("*.html"))
+          skipped = {"index", "404", "_not-found", "_global-error"}
+
+          for html_file in html_files:
+              route = html_file.relative_to(out).as_posix()[:-5]  # strip ".html"
+              if route in skipped or route.endswith("/index"):
+                  continue
+              target = out / route / "index.html"
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(html_file.read_bytes())
+          PY
+
+          # GitHub Pages serves 404.html for unknown routes.
+          if [ -f ./out/_not-found.html ] && [ ! -f ./out/404.html ]; then
+            cp ./out/_not-found.html ./out/404.html
+          fi
+
           touch ./out/.nojekyll
+
+          # Fail fast if site output is missing.
+          test -f ./out/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
