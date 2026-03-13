@@ -56,6 +56,13 @@ jobs:
             cp -R ./public/. ./out/
           fi
 
+          # Ensure discover media assets are explicitly copied for Pages.
+          if [ -d ./public/discover ]; then
+            mkdir -p ./out/discover
+            cp -R ./public/discover/. ./out/discover/
+            test -d ./out/discover
+          fi
+
           # Ensure route paths like /about resolve on static hosting.
           python3 - <<'PY'
           from pathlib import Path
