@@ -143,7 +143,8 @@ export const FOOTER = {
   ],
   company: [
     { label: "About", href: "/about" },
-    { label: "Blog", href: "#" },
+    { label: "Advertise", href: "/advertise" },
+    { label: "Artist", href: "/discover" },
     { label: "Contact", href: "#" },
   ],
   legal: [
