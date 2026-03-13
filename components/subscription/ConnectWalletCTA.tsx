@@ -10,8 +10,8 @@ export function ConnectWalletCTA() {
           Connect your wallet to subscribe
         </h2>
         <p className="text-muted mb-6 max-w-lg mx-auto">
-          Your subscription goes straight to the artists you love. No labels.
-          No platforms taking 50%. Pay monthly on XRPL/Xahau.
+          Upgrade to Premium or Pro for ad-free listening, badges, and exclusive
+          NFT drops. Save 20% when you choose annual billing.
         </p>
         <Button variant="primary" size="lg" asChild>
           <a href="#">{SUBSCRIPTION.connectWallet}</a>

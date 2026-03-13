@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Subscription | Sound Alive Radio",
   description:
-    "Support artists directly. Monthly on-chain subscriptions. No labels. No platforms taking 50%.",
+    "Choose Free, Premium, or Pro. Save 20% with annual billing and unlock ad-free listening, badges, and exclusive NFT drops.",
 };
 
 export default function SubscriptionLayout({

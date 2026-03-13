@@ -20,27 +20,59 @@ function canPlayHlsNatively(): boolean {
   );
 }
 
+function toPlayableSrc(streamUrl: string): string {
+  if (isHlsUrl(streamUrl)) return streamUrl;
+  return `/api/stream?url=${encodeURIComponent(streamUrl)}`;
+}
+
 /**
  * Minimal persistent audio player (bottom bar).
- * Reads streamUrl and channelName from PlayerContext (set when user clicks Tune In).
- * Auto-plays when a new stream is set (user just clicked Tune In).
+ * Reads stream session state from PlayerContext.
+ * Auto-plays when a new stream is set.
  * Uses hls.js when the stream is HLS or when the browser reports "source not supported".
  */
 export function MiniPlayer({ className }: { className?: string } = {}) {
-  const { streamUrl, channelName } = usePlayer();
+  const {
+    streamUrl,
+    streamUrls,
+    channelName,
+    currentTitle,
+    volume,
+    muted,
+    nextStream,
+    setVolume,
+    toggleMute,
+  } = usePlayer();
   const [playing, setPlaying] = useState(false);
   const [playError, setPlayError] = useState<string | null>(null);
-  const [useHls, setUseHls] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const hlsRef = useRef<Hls | null>(null);
+  const failedUrlRef = useRef<string | null>(null);
+
+  const handleFatalPlaybackError = useCallback(
+    (failedUrl: string, fallbackMessage?: string) => {
+      if (failedUrlRef.current === failedUrl) return;
+      failedUrlRef.current = failedUrl;
+      setPlaying(false);
+
+      if (streamUrls.length > 1) {
+        setPlayError("Stream issue detected. Switching to backup...");
+        nextStream();
+      } else {
+        setPlayError(
+          fallbackMessage ?? "Playback failed. This stream may not be supported."
+        );
+      }
+    },
+    [nextStream, streamUrls.length]
+  );
 
   const tryHlsPlayback = useCallback(
-    (url: string) => {
+    (sourceUrl: string, originStreamUrl: string) => {
       const el = audioRef.current;
       if (!el || typeof window === "undefined") return;
 
       if (!Hls.isSupported()) {
-        setPlayError("Stream format not supported in this browser");
         return;
       }
 
@@ -54,10 +86,8 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
         lowLatencyMode: true,
       });
       hlsRef.current = hls;
-      setUseHls(true);
-      setPlayError(null);
 
-      hls.loadSource(url);
+      hls.loadSource(sourceUrl);
       hls.attachMedia(el);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -65,28 +95,34 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
       });
       hls.on(Hls.Events.ERROR, (_, data) => {
         if (data.fatal) {
-          setPlayError("Stream failed to load");
-          setPlaying(false);
+          handleFatalPlaybackError(originStreamUrl, "Stream failed to load");
         }
       });
     },
-    []
+    [handleFatalPlaybackError]
   );
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    el.volume = volume;
+    el.muted = muted;
+  }, [volume, muted, streamUrl]);
 
   useEffect(() => {
     if (!streamUrl || !audioRef.current) return;
     const el = audioRef.current;
 
+    failedUrlRef.current = null;
     hlsRef.current?.destroy();
     hlsRef.current = null;
-    setUseHls(false);
-    setPlayError(null);
 
+    const playableSrc = toPlayableSrc(streamUrl);
     const isHls = isHlsUrl(streamUrl);
     const nativeHls = canPlayHlsNatively();
 
     if (isHls && !nativeHls && Hls.isSupported()) {
-      tryHlsPlayback(streamUrl);
+      tryHlsPlayback(playableSrc, streamUrl);
       return () => {
         hlsRef.current?.destroy();
         hlsRef.current = null;
@@ -95,7 +131,7 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
 
     el.removeAttribute("src");
     el.load();
-    el.src = streamUrl;
+    el.src = playableSrc;
 
     const play = () => {
       el.play().catch(() => setPlaying(false));
@@ -105,10 +141,10 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
 
     const handleError = () => {
       const err = el.error;
-      if (err?.code === MEDIA_ERR_SRC_NOT_SUPPORTED && Hls.isSupported()) {
-        tryHlsPlayback(streamUrl);
+      if (isHls && err?.code === MEDIA_ERR_SRC_NOT_SUPPORTED && Hls.isSupported()) {
+        tryHlsPlayback(playableSrc, streamUrl);
       } else {
-        setPlayError("Playback failed. This stream may not be supported.");
+        handleFatalPlaybackError(streamUrl);
       }
     };
     el.addEventListener("error", handleError);
@@ -119,7 +155,7 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
       hlsRef.current?.destroy();
       hlsRef.current = null;
     };
-  }, [streamUrl, tryHlsPlayback]);
+  }, [streamUrl, tryHlsPlayback, handleFatalPlaybackError]);
 
   if (!streamUrl) {
     return (
@@ -136,7 +172,9 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
           </div>
           <div>
             <p className="text-sm font-medium text-headline">{channelName}</p>
-            <p className="text-xs text-muted">Stream not configured</p>
+            <p className="text-xs text-muted">
+              {currentTitle || "Stream not configured"}
+            </p>
           </div>
         </div>
         <button
@@ -166,13 +204,11 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
           audioRef.current = el;
         }}
         key={streamUrl}
-        src={useHls ? undefined : streamUrl}
         onPlay={() => {
           setPlaying(true);
           setPlayError(null);
         }}
         onPause={() => setPlaying(false)}
-        id="mini-player-audio"
       />
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
@@ -181,32 +217,67 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
         <div className="min-w-0">
           <p className="text-sm font-medium text-headline truncate">{channelName}</p>
           <p className="text-xs text-muted">
-            {playError ?? (playing ? "Live" : "Paused")}
+            {playError ??
+              (currentTitle ||
+                (playing ? "Live" : "Paused"))}
           </p>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => {
-          const el = document.getElementById("mini-player-audio") as HTMLAudioElement;
-          if (el) {
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="w-9 h-9 rounded-full bg-white/10 text-foreground flex items-center justify-center hover:bg-white/15 transition-colors"
+          aria-label={muted ? "Unmute" : "Mute"}
+        >
+          {muted || volume === 0 ? (
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M16.5 12c0-1.77-1-3.29-2.5-4.03v8.05A4.49 4.49 0 0 0 16.5 12zM19 12c0 2.53-1.17 4.78-3 6.24v-2.06A6.96 6.96 0 0 0 17 12c0-1.67-.58-3.21-1.55-4.41V5.53A8.98 8.98 0 0 1 19 12zM4.27 3 3 4.27l4.73 4.73H4v6h4l5 5v-7.73L18.73 21 20 19.73 4.27 3z" />
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1-3.29-2.5-4.03v8.05A4.49 4.49 0 0 0 16.5 12zM14 3.23v2.06a6.96 6.96 0 0 1 0 13.42v2.06a8.99 8.99 0 0 0 0-17.54z" />
+            </svg>
+          )}
+        </button>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          value={muted ? 0 : volume}
+          onChange={(e) => {
+            const next = Number(e.target.value);
+            setVolume(next);
+            if (muted && next > 0) {
+              toggleMute();
+            }
+          }}
+          className="w-20 accent-primary"
+          aria-label="Volume"
+        />
+        <button
+          type="button"
+          onClick={() => {
+            const el = audioRef.current;
+            if (!el) return;
             if (playing) el.pause();
             else el.play().catch(() => setPlaying(false));
-          }
-        }}
-        className="w-10 h-10 rounded-full bg-primary text-background flex items-center justify-center hover:bg-primary/90 transition-colors shrink-0"
-        aria-label={playing ? "Pause" : "Play"}
-      >
-        {playing ? (
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-          </svg>
-        ) : (
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        )}
-      </button>
+          }}
+          className="w-10 h-10 rounded-full bg-primary text-background flex items-center justify-center hover:bg-primary/90 transition-colors"
+          aria-label={playing ? "Pause" : "Play"}
+        >
+          {playing ? (
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

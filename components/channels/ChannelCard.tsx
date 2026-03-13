@@ -16,9 +16,12 @@ export interface ChannelCardProps {
   listeners: string;
   coverUrl?: string;
   streamUrl?: string;
+  streamUrls?: string[];
+  channelBaseUrl?: string;
 }
 
 export function ChannelCard({
+  id,
   name,
   slug,
   genre,
@@ -26,12 +29,16 @@ export function ChannelCard({
   listeners,
   coverUrl,
   streamUrl,
+  streamUrls,
+  channelBaseUrl,
 }: ChannelCardProps) {
   const { setChannel } = usePlayer();
+  const hasPlayableStream =
+    Boolean(streamUrl) || Boolean(streamUrls && streamUrls.length > 0);
 
   return (
-    <Card className="p-0 overflow-hidden group">
-      <Link href={`/channels#${slug}`} className="block">
+    <Card className="group flex h-full flex-col overflow-hidden p-0">
+      <Link href={`/channels#${slug}`} className="block flex flex-1 flex-col">
         <div className="relative aspect-square bg-gradient-to-br from-primary/25 via-primary-dark/15 to-primary/10 group-hover:opacity-90 transition-opacity">
           {coverUrl && (
             <Image
@@ -43,29 +50,38 @@ export function ChannelCard({
             />
           )}
         </div>
-        <div className="p-4">
+        <div className="flex flex-1 flex-col p-4">
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="live">Live</Badge>
             <Badge variant="genre">{genre}</Badge>
           </div>
-          <h3 className="font-semibold text-headline mb-1">{name}</h3>
-          <p className="text-xs text-muted mb-1">
+          <h3 className="font-semibold text-headline mb-1 line-clamp-1">{name}</h3>
+          <p className="text-xs text-muted mb-1 line-clamp-2 min-h-8">
             {CHANNELS.nowPlaying}: {nowPlaying}
           </p>
-          <p className="text-xs text-muted mb-3">{listeners} listeners</p>
+          <p className="text-xs text-muted mt-auto">{listeners} listeners</p>
         </div>
       </Link>
-      <div className="px-4 pb-4">
-        {streamUrl ? (
+      <div className="px-4 pb-4 mt-auto">
+        {hasPlayableStream ? (
           <button
             type="button"
-            onClick={() => setChannel(streamUrl, name)}
+            onClick={() =>
+              setChannel({
+                id,
+                name,
+                nowPlaying,
+                channelBaseUrl,
+                streamUrl,
+                streamUrls,
+              })
+            }
             className="w-full inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg bg-primary text-background border border-primary/50 hover:bg-primary/90 transition-colors"
           >
             {CHANNELS.tuneIn}
           </button>
         ) : (
-          <span className="inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg bg-white/10 text-muted border border-white/10 cursor-not-allowed">
+          <span className="w-full inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg bg-white/10 text-muted border border-white/10 cursor-not-allowed">
             {CHANNELS.tuneIn}
           </span>
         )}

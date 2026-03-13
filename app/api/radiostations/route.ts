@@ -1,10 +1,14 @@
 import {
-  fetchPlaylist,
   fetchRadiostations,
+  fetchPlaylist,
+  fetchStationPlaylist,
   buildStreamUrlForStation,
   type Radiostation,
+  type PlaylistNode,
 } from "@/lib/soundalive-api";
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
 
 const FALLBACK_STATIONS: Radiostation[] = [
   { name: "Sound Alive Radio", url: "https://soundaliveradio.net/" },
@@ -13,20 +17,52 @@ const FALLBACK_STATIONS: Radiostation[] = [
   { name: "Sound Alive House", url: "https://house.soundaliveradio.net/" },
 ];
 
+const STATIC_FALLBACK_STREAMS: Record<string, string[]> = {
+  "https://soundaliveradio.net": [
+    "https://evernode8.sbnodes.org:30833/live",
+    "https://takeme2.runonevernode.cloud:30235/live",
+  ],
+  "https://rock.soundaliveradio.net": [
+    "https://takeme1.runonevernode.cloud:30133/live",
+    "https://au34.evernodeau.com:36525/live",
+    "https://evernode8.sbnodes.org:30831/live",
+  ],
+  "https://talk.soundaliveradio.net": [
+    "https://evernode26.poweredbyvirtum.xyz:32633/live",
+    "https://node22.evernodebyvirtum.xyz:32235/live",
+    "https://evernode8.infoevernode.xyz:30831/live",
+  ],
+  "https://house.soundaliveradio.net": [
+    "https://evernode8.poweredbyvirtum.xyz:30833/live",
+    "https://evernode8.infoevernode.xyz:30835/live",
+    "https://au35.evernodeau.com:36525/live",
+  ],
+};
+
 /**
  * Order of operations:
- * 1. Playlist first - what live streams are available (host/port/path or URL).
- * 2. Radiostations - genre subdomains (hiphop = no subdomain, rock = rock.<host>, house = house.<host>, talk = talk.<host>).
- * 3. Each station gets streamUrl = its subdomain + playlist stream (port/path). Current-title is run on each station url.
+ * 1. Radiostations first - list channel base URLs.
+ * 2. For each station, fetch {stationBase}/playlist.json in parallel.
+ * 3. Return streamUrls[] + primary streamUrl with safe fallback behavior.
  */
-export async function GET() {
-  let streamNodes: Awaited<ReturnType<typeof fetchPlaylist>> = [];
-  try {
-    streamNodes = await fetchPlaylist();
-  } catch {
-    // Playlist failed; we will fall back to station.url for streamUrl below
-  }
 
+function dedupeUrls(urls: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const url of urls) {
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    result.push(url);
+  }
+  return result;
+}
+
+function staticFallbackForStation(stationUrl: string): string[] {
+  const normalized = stationUrl.replace(/\/$/, "");
+  return STATIC_FALLBACK_STREAMS[normalized] ?? [];
+}
+
+export async function GET() {
   let stations: Radiostation[];
   try {
     stations = await fetchRadiostations();
@@ -37,16 +73,38 @@ export async function GET() {
     return NextResponse.json(FALLBACK_STATIONS);
   }
 
-  const streamTemplate = streamNodes[0] ?? null;
+  const stationPlaylists = await Promise.allSettled(
+    stations.map((station) => fetchStationPlaylist(station.url))
+  );
 
-  const withStreams = stations.map((station, i) => {
-    const streamUrl =
-      streamTemplate != null
-        ? buildStreamUrlForStation(station.url, streamTemplate)
-        : undefined;
+  let fallbackTemplateNodes: PlaylistNode[] = [];
+  try {
+    fallbackTemplateNodes = await fetchPlaylist();
+  } catch {
+    // If global playlist is unavailable we still return station-specific fallback streams.
+  }
+
+  const withStreams = stations.map((station, index) => {
+    const stationStreams =
+      stationPlaylists[index]?.status === "fulfilled"
+        ? stationPlaylists[index].value
+        : [];
+
+    const fallbackStreams = fallbackTemplateNodes.map((node) =>
+      buildStreamUrlForStation(station.url, node)
+    );
+    const staticFallbackStreams = staticFallbackForStation(station.url);
+
+    const streamUrls = dedupeUrls([
+      ...stationStreams,
+      ...staticFallbackStreams,
+      ...fallbackStreams,
+    ]);
+
     return {
       ...station,
-      streamUrl: streamUrl ?? station.url,
+      streamUrls,
+      streamUrl: streamUrls[0] ?? null,
     };
   });
 

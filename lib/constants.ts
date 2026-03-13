@@ -12,6 +12,7 @@ export const BRAND = {
 export const NAV_LINKS = [
   { href: "/discover", label: "Discover" },
   { href: "/channels", label: "Channels" },
+  { href: "/about", label: "About" },
   { href: "/subscription", label: "Subscription" },
 ] as const;
 
@@ -141,12 +142,12 @@ export const FOOTER = {
     { label: "Listen Live", href: "#listen" },
   ],
   company: [
-    { label: "About", href: "#" },
+    { label: "About", href: "/about" },
     { label: "Blog", href: "#" },
     { label: "Contact", href: "#" },
   ],
   legal: [
-    { label: "Privacy", href: "#" },
+    { label: "Privacy", href: "/privacy-policy" },
     { label: "Terms", href: "#" },
   ],
   downloadApp: "Download the App",
@@ -174,13 +175,13 @@ export const CHANNELS = {
 } as const;
 
 export const SUBSCRIPTION = {
-  heroTitle: "Support Artists Directly - Monthly On-Chain",
+  heroTitle: "Choose Your Sound Alive Plan",
   heroSub:
-    "Your subscription goes straight to the artists you love. No labels. No platforms taking 50%.",
+    "Listen free with ads, or upgrade to Premium and Pro for ad-free channels, badges, and exclusive perks.",
   connectWallet: "Connect XRPL Wallet",
-  artistTiers: "Support your favorite artist",
+  artistTiers: "Subscription Plans",
   allAccess: "All-Access",
-  selectTier: "Select",
+  selectTier: "Choose Plan",
 } as const;
 
 export const TIER_BENEFITS = [

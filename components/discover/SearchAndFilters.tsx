@@ -3,7 +3,7 @@
 import { DISCOVER } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const GENRES = ["All", "Hip-Hop", "Electronic", "Rock", "R&B", "Other"] as const;
+const GENRES = ["All", "Hip-Hop", "House", "Rock", "Talk"] as const;
 
 export function SearchAndFilters({
   search = "",

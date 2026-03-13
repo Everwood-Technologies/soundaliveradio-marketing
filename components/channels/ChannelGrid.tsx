@@ -18,6 +18,8 @@ export function ChannelGrid({ genre = "All" }: { genre?: string }) {
           listeners: c.listeners,
           coverUrl: c.coverUrl,
           streamUrl: c.streamUrl,
+          streamUrls: c.streamUrls,
+          channelBaseUrl: c.channelBaseUrl,
         }))
       : MOCK_CHANNELS;
   const filtered = useMemo(() => {
@@ -30,7 +32,7 @@ export function ChannelGrid({ genre = "All" }: { genre?: string }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
       {filtered.map((channel) => (
         <ChannelCard key={channel.id} {...channel} />
       ))}
