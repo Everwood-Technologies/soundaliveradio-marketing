@@ -22,7 +22,7 @@ export function Hero() {
           {HERO.subheadline}
         </p>
         <Button size="lg" variant="primary" asChild>
-          <Link href="#listen" id="listen">
+          <Link href="https://soundaliveradio.net" id="listen">
             {HERO.cta}
           </Link>
         </Button>
