@@ -8,8 +8,6 @@ import {
 } from "@/lib/soundalive-api";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-
 const FALLBACK_STATIONS: Radiostation[] = [
   { name: "Sound Alive Radio", url: "https://soundaliveradio.net/" },
   { name: "Sound Alive Rock", url: "https://rock.soundaliveradio.net/" },
