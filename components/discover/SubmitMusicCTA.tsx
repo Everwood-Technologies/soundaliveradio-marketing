@@ -11,7 +11,7 @@ export function SubmitMusicCTA() {
           {DISCOVER.submitCta}
         </h2>
         <Button variant="primary" size="lg" asChild className="mt-4">
-          <Link href="#">Submit your music</Link>
+          <Link href="/submit-music">Submit your music</Link>
         </Button>
       </div>
     </Section>
