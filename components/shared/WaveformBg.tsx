@@ -2,17 +2,17 @@
 
 import { motion } from "framer-motion";
 
+const WAVE_ARCS = [
+  { cx: "50%", cy: "50%", r: "40%", delay: 0 },
+  { cx: "50%", cy: "50%", r: "55%", delay: 0.2 },
+  { cx: "50%", cy: "50%", r: "70%", delay: 0.4 },
+  { cx: "50%", cy: "50%", r: "85%", delay: 0.6 },
+] as const;
+
 /**
  * Subtle animated waveform / radio-wave background for hero sections.
  */
 export function WaveformBg({ className }: { className?: string }) {
-  const arcs = [
-    { cx: "50%", cy: "50%", r: "40%", delay: 0 },
-    { cx: "50%", cy: "50%", r: "55%", delay: 0.2 },
-    { cx: "50%", cy: "50%", r: "70%", delay: 0.4 },
-    { cx: "50%", cy: "50%", r: "85%", delay: 0.6 },
-  ];
-
   return (
     <div
       className={`absolute inset-0 overflow-hidden pointer-events-none ${className ?? ""}`}
@@ -35,9 +35,9 @@ export function WaveformBg({ className }: { className?: string }) {
             <stop offset="100%" stopColor="rgba(204,0,0,0)" />
           </linearGradient>
         </defs>
-        {arcs.map(({ cx, cy, r, delay }, i) => (
+        {WAVE_ARCS.map(({ cx, cy, r, delay }, i) => (
           <motion.circle
-            key={i}
+            key={r}
             cx={cx}
             cy={cy}
             r={r}

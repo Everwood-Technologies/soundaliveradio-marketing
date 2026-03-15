@@ -19,6 +19,7 @@ export function ChannelFilters({
     <div className="flex flex-wrap gap-2 mb-8">
       {FILTERS.map((g) => (
         <button
+          type="button"
           key={g}
           onClick={() => handleClick(g)}
           className={cn(

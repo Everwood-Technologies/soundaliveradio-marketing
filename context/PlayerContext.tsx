@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -30,7 +31,7 @@ interface PlayerState {
   muted: boolean;
 }
 
-interface PlayerContextValue extends PlayerState {
+interface PlayerActions {
   setChannel: (
     payloadOrStream: SetChannelPayload | string | null,
     channelName?: string
@@ -41,7 +42,10 @@ interface PlayerContextValue extends PlayerState {
   toggleMute: () => void;
 }
 
-const PlayerContext = createContext<PlayerContextValue | null>(null);
+type PlayerContextValue = PlayerState & PlayerActions;
+
+const PlayerStateContext = createContext<PlayerState | null>(null);
+const PlayerActionsContext = createContext<PlayerActions | null>(null);
 
 function dedupeUrls(urls: string[]): string[] {
   const seen = new Set<string>();
@@ -190,26 +194,42 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     };
   }, [state.channelBaseUrl]);
 
+  const actions = useMemo<PlayerActions>(
+    () => ({
+      setChannel,
+      nextStream,
+      setCurrentTitle,
+      setVolume,
+      toggleMute,
+    }),
+    [setChannel, nextStream, setCurrentTitle, setVolume, toggleMute]
+  );
+
   return (
-    <PlayerContext.Provider
-      value={{
-        ...state,
-        setChannel,
-        nextStream,
-        setCurrentTitle,
-        setVolume,
-        toggleMute,
-      }}
-    >
-      {children}
-    </PlayerContext.Provider>
+    <PlayerActionsContext.Provider value={actions}>
+      <PlayerStateContext.Provider value={state}>{children}</PlayerStateContext.Provider>
+    </PlayerActionsContext.Provider>
   );
 }
 
-export function usePlayer(): PlayerContextValue {
-  const ctx = useContext(PlayerContext);
-  if (!ctx) {
-    throw new Error("usePlayer must be used within a PlayerProvider");
+export function usePlayerState(): PlayerState {
+  const state = useContext(PlayerStateContext);
+  if (!state) {
+    throw new Error("usePlayerState must be used within a PlayerProvider");
   }
-  return ctx;
+  return state;
+}
+
+export function usePlayerActions(): PlayerActions {
+  const actions = useContext(PlayerActionsContext);
+  if (!actions) {
+    throw new Error("usePlayerActions must be used within a PlayerProvider");
+  }
+  return actions;
+}
+
+export function usePlayer(): PlayerContextValue {
+  const state = usePlayerState();
+  const actions = usePlayerActions();
+  return useMemo(() => ({ ...state, ...actions }), [state, actions]);
 }

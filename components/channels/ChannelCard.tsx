@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePlayer } from "@/context/PlayerContext";
+import { memo } from "react";
+import { usePlayerActions } from "@/context/PlayerContext";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CHANNELS } from "@/lib/constants";
@@ -20,7 +21,7 @@ export interface ChannelCardProps {
   channelBaseUrl?: string;
 }
 
-export function ChannelCard({
+export const ChannelCard = memo(function ChannelCard({
   id,
   name,
   slug,
@@ -32,7 +33,7 @@ export function ChannelCard({
   streamUrls,
   channelBaseUrl,
 }: ChannelCardProps) {
-  const { setChannel } = usePlayer();
+  const { setChannel } = usePlayerActions();
   const hasPlayableStream =
     Boolean(streamUrl) || Boolean(streamUrls && streamUrls.length > 0);
 
@@ -88,4 +89,4 @@ export function ChannelCard({
       </div>
     </Card>
   );
-}
+});

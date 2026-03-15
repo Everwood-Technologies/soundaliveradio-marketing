@@ -38,6 +38,7 @@ export function SearchAndFilters({
         <div className="flex flex-wrap gap-2">
           {GENRES.map((g) => (
             <button
+              type="button"
               key={g}
               onClick={() => handleGenre(g)}
               className={cn(

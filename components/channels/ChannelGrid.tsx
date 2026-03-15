@@ -7,21 +7,24 @@ import { ChannelCard } from "./ChannelCard";
 
 export function ChannelGrid({ genre = "All" }: { genre?: string }) {
   const { channels, loading } = useLiveChannels();
-  const source =
-    channels.length > 0
-      ? channels.map((c) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          genre: c.genre,
-          nowPlaying: c.nowPlaying,
-          listeners: c.listeners,
-          coverUrl: c.coverUrl,
-          streamUrl: c.streamUrl,
-          streamUrls: c.streamUrls,
-          channelBaseUrl: c.channelBaseUrl,
-        }))
-      : MOCK_CHANNELS;
+  const source = useMemo(
+    () =>
+      channels.length > 0
+        ? channels.map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            genre: c.genre,
+            nowPlaying: c.nowPlaying,
+            listeners: c.listeners,
+            coverUrl: c.coverUrl,
+            streamUrl: c.streamUrl,
+            streamUrls: c.streamUrls,
+            channelBaseUrl: c.channelBaseUrl,
+          }))
+        : MOCK_CHANNELS,
+    [channels]
+  );
   const filtered = useMemo(() => {
     if (genre === "All") return source;
     return source.filter((c) => c.genre === genre);

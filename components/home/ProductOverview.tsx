@@ -13,9 +13,9 @@ export function ProductOverview() {
             Core Features
           </h3>
           <ul className="space-y-3">
-            {PRODUCT_OVERVIEW.coreFeatures.map((feature, i) => (
+            {PRODUCT_OVERVIEW.coreFeatures.map((feature) => (
               <li
-                key={i}
+                key={feature}
                 className="flex gap-3 text-muted text-sm"
               >
                 <span className="text-primary font-medium shrink-0">+</span>

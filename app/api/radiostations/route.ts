@@ -63,6 +63,10 @@ function staticFallbackForStation(stationUrl: string): string[] {
 }
 
 export async function GET() {
+  const fallbackTemplatePromise: Promise<PlaylistNode[]> = fetchPlaylist().catch(
+    () => []
+  );
+
   let stations: Radiostation[];
   try {
     stations = await fetchRadiostations();
@@ -73,16 +77,10 @@ export async function GET() {
     return NextResponse.json(FALLBACK_STATIONS);
   }
 
-  const stationPlaylists = await Promise.allSettled(
-    stations.map((station) => fetchStationPlaylist(station.url))
-  );
-
-  let fallbackTemplateNodes: PlaylistNode[] = [];
-  try {
-    fallbackTemplateNodes = await fetchPlaylist();
-  } catch {
-    // If global playlist is unavailable we still return station-specific fallback streams.
-  }
+  const [stationPlaylists, fallbackTemplateNodes] = await Promise.all([
+    Promise.allSettled(stations.map((station) => fetchStationPlaylist(station.url))),
+    fallbackTemplatePromise,
+  ]);
 
   const withStreams = stations.map((station, index) => {
     const stationStreams =

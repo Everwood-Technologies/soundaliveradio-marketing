@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MOCK_CHANNELS } from "@/lib/mock-data";
@@ -9,37 +10,40 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CHANNELS } from "@/lib/constants";
-import { usePlayer } from "@/context/PlayerContext";
+import { usePlayerActions } from "@/context/PlayerContext";
 
 export function FeaturedChannels() {
-  const { setChannel } = usePlayer();
+  const { setChannel } = usePlayerActions();
   const { channels, loading } = useLiveChannels();
-  const displayChannels =
-    channels.length > 0
-      ? channels.map((c) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          genre: c.genre,
-          nowPlaying: c.nowPlaying,
-          listeners: c.listeners,
-          coverUrl: c.coverUrl,
-          streamUrl: c.streamUrl,
-          streamUrls: c.streamUrls,
-          channelBaseUrl: c.channelBaseUrl,
-        }))
-      : MOCK_CHANNELS.map((c) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          genre: c.genre,
-          nowPlaying: c.nowPlaying,
-          listeners: c.listeners,
-          coverUrl: c.coverUrl,
-          streamUrl: undefined,
-          streamUrls: [] as string[],
-          channelBaseUrl: undefined,
-        }));
+  const displayChannels = useMemo(
+    () =>
+      channels.length > 0
+        ? channels.map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            genre: c.genre,
+            nowPlaying: c.nowPlaying,
+            listeners: c.listeners,
+            coverUrl: c.coverUrl,
+            streamUrl: c.streamUrl,
+            streamUrls: c.streamUrls,
+            channelBaseUrl: c.channelBaseUrl,
+          }))
+        : MOCK_CHANNELS.map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            genre: c.genre,
+            nowPlaying: c.nowPlaying,
+            listeners: c.listeners,
+            coverUrl: c.coverUrl,
+            streamUrl: undefined,
+            streamUrls: [] as string[],
+            channelBaseUrl: undefined,
+          })),
+    [channels]
+  );
 
   return (
     <Section>

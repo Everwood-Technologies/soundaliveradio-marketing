@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { usePlayer } from "@/context/PlayerContext";
+import { usePlayerActions, usePlayerState } from "@/context/PlayerContext";
 import { cn } from "@/lib/utils";
 import Hls from "hls.js";
 
@@ -31,17 +31,13 @@ function toPlayableSrc(streamUrl: string): string {
  * Uses hls.js when the stream is HLS or when the browser reports "source not supported".
  */
 export function MiniPlayer({ className }: { className?: string } = {}) {
+  const { streamUrl, streamUrls, channelName, currentTitle, volume, muted } =
+    usePlayerState();
   const {
-    streamUrl,
-    streamUrls,
-    channelName,
-    currentTitle,
-    volume,
-    muted,
     nextStream,
     setVolume,
     toggleMute,
-  } = usePlayer();
+  } = usePlayerActions();
   const [playing, setPlaying] = useState(false);
   const [playError, setPlayError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -106,7 +102,7 @@ export function MiniPlayer({ className }: { className?: string } = {}) {
     if (!el) return;
     el.volume = volume;
     el.muted = muted;
-  }, [volume, muted, streamUrl]);
+  }, [volume, muted]);
 
   useEffect(() => {
     if (!streamUrl || !audioRef.current) return;

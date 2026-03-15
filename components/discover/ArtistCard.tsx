@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
+import { memo } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -15,7 +16,7 @@ export interface ArtistCardProps {
   channelHref: string;
 }
 
-export function ArtistCard({
+export const ArtistCard = memo(function ArtistCard({
   name,
   genre,
   bio,
@@ -60,4 +61,4 @@ export function ArtistCard({
       </div>
     </Card>
   );
-}
+});

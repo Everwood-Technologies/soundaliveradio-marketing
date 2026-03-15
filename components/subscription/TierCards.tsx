@@ -10,17 +10,18 @@ import { cn } from "@/lib/utils";
 
 const ANNUAL_DISCOUNT = 0.2;
 const MONTHS_IN_YEAR = 12;
+const USD_FORMATTER = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
 
 function getAnnualPrice(monthlyPrice: number) {
   return monthlyPrice * MONTHS_IN_YEAR * (1 - ANNUAL_DISCOUNT);
 }
 
 function formatUsd(price: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(price);
+  return USD_FORMATTER.format(price);
 }
 
 export function TierCards() {
