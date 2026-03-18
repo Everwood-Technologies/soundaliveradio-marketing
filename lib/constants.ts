@@ -170,7 +170,7 @@ export const DISCOVER = {
 
 export const CHANNELS = {
   heroTitle: "Live Channels - Always On - Fully Decentralized",
-  heroSub: "Tune in to any channel. No sign-up required.",
+  heroSub: "Connect your XRPL wallet to tune in to any live channel.",
   tuneIn: "Tune In",
   nowPlaying: "Now Playing",
 } as const;

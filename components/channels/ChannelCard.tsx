@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { memo } from "react";
 import { usePlayerActions } from "@/context/PlayerContext";
+import { useWalletActions } from "@/context/WalletContext";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CHANNELS } from "@/lib/constants";
@@ -34,8 +35,23 @@ export const ChannelCard = memo(function ChannelCard({
   channelBaseUrl,
 }: ChannelCardProps) {
   const { setChannel } = usePlayerActions();
+  const { ensureConnected } = useWalletActions();
   const hasPlayableStream =
     Boolean(streamUrl) || Boolean(streamUrls && streamUrls.length > 0);
+
+  const handleTuneIn = async () => {
+    const connected = await ensureConnected();
+    if (!connected) return;
+
+    setChannel({
+      id,
+      name,
+      nowPlaying,
+      channelBaseUrl,
+      streamUrl,
+      streamUrls,
+    });
+  };
 
   return (
     <Card className="group flex h-full flex-col overflow-hidden p-0">
@@ -67,16 +83,7 @@ export const ChannelCard = memo(function ChannelCard({
         {hasPlayableStream ? (
           <button
             type="button"
-            onClick={() =>
-              setChannel({
-                id,
-                name,
-                nowPlaying,
-                channelBaseUrl,
-                streamUrl,
-                streamUrls,
-              })
-            }
+            onClick={() => void handleTuneIn()}
             className="w-full inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg bg-primary text-background border border-primary/50 hover:bg-primary/90 transition-colors"
           >
             {CHANNELS.tuneIn}

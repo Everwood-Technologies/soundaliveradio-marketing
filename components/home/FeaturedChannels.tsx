@@ -11,9 +11,11 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CHANNELS } from "@/lib/constants";
 import { usePlayerActions } from "@/context/PlayerContext";
+import { useWalletActions } from "@/context/WalletContext";
 
 export function FeaturedChannels() {
   const { setChannel } = usePlayerActions();
+  const { ensureConnected } = useWalletActions();
   const { channels, loading } = useLiveChannels();
   const displayChannels = useMemo(
     () =>
@@ -44,6 +46,20 @@ export function FeaturedChannels() {
           })),
     [channels]
   );
+
+  const handleTuneIn = async (channel: (typeof displayChannels)[number]) => {
+    const connected = await ensureConnected();
+    if (!connected) return;
+
+    setChannel({
+      id: channel.id,
+      name: channel.name,
+      nowPlaying: channel.nowPlaying,
+      channelBaseUrl: channel.channelBaseUrl,
+      streamUrl: channel.streamUrl,
+      streamUrls: channel.streamUrls,
+    });
+  };
 
   return (
     <Section>
@@ -105,16 +121,7 @@ export function FeaturedChannels() {
                 {channel.streamUrl || channel.streamUrls.length > 0 ? (
                   <button
                     type="button"
-                    onClick={() =>
-                      setChannel({
-                        id: channel.id,
-                        name: channel.name,
-                        nowPlaying: channel.nowPlaying,
-                        channelBaseUrl: channel.channelBaseUrl,
-                        streamUrl: channel.streamUrl,
-                        streamUrls: channel.streamUrls,
-                      })
-                    }
+                    onClick={() => void handleTuneIn(channel)}
                     className="w-full inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-lg bg-primary text-background border border-primary/50 hover:bg-primary/90 transition-colors"
                   >
                     {CHANNELS.tuneIn}

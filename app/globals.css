@@ -70,6 +70,58 @@ body {
   background: transparent;
 }
 
+/*
+  XRPL Connect theming
+  These CSS variables are read from the <xrpl-wallet-connector> element and
+  forwarded into the connector's shadow-dom portals.
+*/
+xrpl-wallet-connector {
+  --xc-font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --xc-border-radius: 0.75rem;
+  --xc-overlay-background: rgba(0, 0, 0, 0.72);
+  --xc-overlay-backdrop-filter: blur(10px);
+  --xc-primary-color: var(--primary);
+  --xc-background-color: #0a0a0a;
+  --xc-text-color: var(--headline);
+  --xc-text-muted-color: var(--muted);
+  --xc-background-secondary: rgba(255, 255, 255, 0.03);
+  --xc-background-tertiary: rgba(255, 255, 255, 0.06);
+  --xc-loading-border-color: rgba(230, 0, 35, 0.35);
+
+  --xc-connect-button-font-size: 0.95rem;
+  --xc-connect-button-border-radius: 0.75rem;
+  --xc-connect-button-color: #fff;
+  --xc-connect-button-background: linear-gradient(180deg, #ff1f3d 0%, #e60023 100%);
+  --xc-connect-button-border: 1px solid rgba(230, 0, 35, 0.45);
+  --xc-connect-button-hover-background: linear-gradient(180deg, #ff3350 0%, #cc001f 100%);
+  --xc-connect-button-font-weight: 600;
+
+  --xc-primary-button-color: #fff;
+  --xc-primary-button-background: linear-gradient(180deg, #ff1f3d 0%, #e60023 100%);
+  --xc-primary-button-border-radius: 0.75rem;
+  --xc-primary-button-font-weight: 600;
+  --xc-primary-button-hover-background: linear-gradient(180deg, #ff3350 0%, #cc001f 100%);
+
+  --xc-secondary-button-color: var(--foreground);
+  --xc-secondary-button-background: rgba(255, 255, 255, 0.06);
+  --xc-secondary-button-border-radius: 0.75rem;
+  --xc-secondary-button-font-weight: 600;
+  --xc-secondary-button-hover-background: rgba(255, 255, 255, 0.12);
+
+  --xc-account-address-button-hover-color: rgba(230, 0, 35, 0.2);
+  --xc-modal-background: rgba(12, 12, 12, 0.98);
+  --xc-modal-border-radius: 0.95rem;
+  --xc-modal-box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(230, 0, 35, 0.24),
+    0 0 36px rgba(230, 0, 35, 0.18);
+
+  --xc-focus-color: var(--primary);
+  --xc-danger-color: #ff5a67;
+  --xc-success-color: #22c55e;
+  --xc-warning-color: #f59e0b;
+}
+
 /* Glassmorphism utility */
 .glass {
   background: rgba(0, 0, 0, 0.558);

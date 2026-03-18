@@ -8,10 +8,19 @@ import { SITE_NAME, NAV_LINKS } from "@/lib/constants";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import logoImg from "@/app/assets/logo.png";
+import { useWallet } from "@/context/WalletContext";
+
+function shortenAddress(address: string): string {
+  return address.length <= 12 ? address : `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
 
 export function Nav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { status, account, connect, disconnect } = useWallet();
+  const isConnected = status === "connected" && Boolean(account?.address);
+  const isConnecting = status === "connecting";
+  const accountLabel = account?.address ? shortenAddress(account.address) : null;
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/5">
@@ -55,9 +64,31 @@ export function Nav() {
           <Button size="sm" variant="primary" className="hidden sm:inline-flex" asChild>
             <Link href="#listen">Listen Live</Link>
           </Button>
-          <Button size="sm" variant="secondary" className="hidden sm:inline-flex" asChild>
-            <Link href="/subscription#connect">Connect XRPL Wallet</Link>
-          </Button>
+          {isConnected && accountLabel ? (
+            <>
+              <span className="hidden sm:inline-flex items-center rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
+                {accountLabel}
+              </span>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="hidden sm:inline-flex"
+                onClick={() => void disconnect()}
+              >
+                Disconnect
+              </Button>
+            </>
+          ) : (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="hidden sm:inline-flex"
+              onClick={() => void connect()}
+              disabled={isConnecting}
+            >
+              {isConnecting ? "Connecting..." : "Connect XRPL Wallet"}
+            </Button>
+          )}
 
           <button
             type="button"
@@ -114,11 +145,35 @@ export function Nav() {
                   Listen Live
                 </Link>
               </Button>
-              <Button asChild variant="secondary" size="md">
-                <Link href="/subscription#connect" onClick={() => setMobileOpen(false)}>
-                  Connect XRPL Wallet
-                </Link>
-              </Button>
+              {isConnected && accountLabel ? (
+                <>
+                  <div className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-medium text-primary">
+                    {accountLabel}
+                  </div>
+                  <Button
+                    variant="secondary"
+                    size="md"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      void disconnect();
+                    }}
+                  >
+                    Disconnect
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="md"
+                  disabled={isConnecting}
+                  onClick={() => {
+                    setMobileOpen(false);
+                    void connect();
+                  }}
+                >
+                  {isConnecting ? "Connecting..." : "Connect XRPL Wallet"}
+                </Button>
+              )}
             </div>
           </div>
         </div>

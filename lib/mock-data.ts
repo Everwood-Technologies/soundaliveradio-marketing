@@ -1,6 +1,6 @@
 import { CHANNEL_COVERS } from "@/app/assets/channels/channels";
 import eSmittyCurrencyOfTime from "@/app/assets/discover/E. Smitty - Currency Of Time.jpeg";
-import eSmittyFlashFutureArt from "@/app/assets/discover/E. Smitty - Flash Future Art.jpeg";
+import eSmitty from "@/app/assets/discover/smitty.jpeg";
 import takeoffTuesdaysAwakening from "@/app/assets/discover/TakeoffTuesdays - Awakening.jpg";
 import kristenCapolino from "@/app/assets/discover/Kristen Capolino.jpg";
 import craigGEsmitty from "@/app/assets/discover/Craig G E. Smitty.jpg";
@@ -62,7 +62,7 @@ export const MOCK_ARTISTS = [
     name: "E. Smitty",
     genre: "Hip-Hop",
     bio: "Driving the Sound Alive Radio Hip-Hop channel with original cuts.",
-    imageUrl: eSmittyCurrencyOfTime,
+    imageUrl: eSmitty,
     channelHref: "https://soundaliveradio.net",
   },
   {
@@ -70,7 +70,7 @@ export const MOCK_ARTISTS = [
     name: "E. Smitty",
     genre: "House",
     bio: "Curating high-energy House sets for the Sound Alive underground.",
-    imageUrl: eSmittyFlashFutureArt,
+    imageUrl: eSmittyCurrencyOfTime,
     channelHref: "https://house.soundaliveradio.net",
   },
   {
